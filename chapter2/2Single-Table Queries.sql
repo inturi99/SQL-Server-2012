@@ -135,3 +135,14 @@ the OFFSET clause skips the first 820 rows, and the FETCH clause filters the nex
 --------------------------------------------------------------------------------------------------
 -- A Quick Look at Window Functions:
 --------------------------------------------------------------------------------------------------
+
+select orderid,custid,val,ROW_NUMBER() OVER(PARTITION By custid ORDER BY val) AS rownum from Sales.OrderValues ORDER BY custid,val;
+
+--------------------------------------------------------------------------------------------------
+-- Predicates and Operators
+--------------------------------------------------------------------------------------------------
+SELECT orderid, empid, orderdate FROM Sales.Orders WHERE orderid IN(10248, 10249, 10250);
+
+SELECT orderid, empid, orderdate FROM Sales.Orders WHERE orderid BETWEEN 10300 AND 10310;
+
+SELECT empid, firstname, lastname FROM HR.Employees WHERE lastname LIKE N'D%';
