@@ -146,3 +146,17 @@ SELECT orderid, empid, orderdate FROM Sales.Orders WHERE orderid IN(10248, 10249
 SELECT orderid, empid, orderdate FROM Sales.Orders WHERE orderid BETWEEN 10300 AND 10310;
 
 SELECT empid, firstname, lastname FROM HR.Employees WHERE lastname LIKE N'D%';
+
+SELECT orderid,empid,orderdate from Sales.Orders WHERE orderdate >= '20080101';
+
+SELECT orderid,empid,orderdate from Sales.Orders WHERE orderdate >= '20080101'  AND empid in (1,3,5);
+
+SELECT orderid,productid,qty,qty * unitprice * (1-discount) AS val from Sales.OrderDetails;
+
+SELECT orderid,custid,empid,orderdate from Sales.Orders where custid=1 AND empid in (1,3,5) OR custid= 85 AND empid IN (2,4,6);
+--Parentheses have the highest precedence, so they give you full control.
+SELECT orderid,custid,empid,orderdate from Sales.Orders where (custid=1 AND empid in (1,3,5) OR custid= 85 AND empid IN (2,4,6));
+
+------------------------------------------------------------------------------------------------------
+-- CASE Expressions
+------------------------------------------------------------------------------------------------------
