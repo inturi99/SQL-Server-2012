@@ -188,5 +188,69 @@ END AS valuecategory
 FROM Sales.OrderValues;
 
 ---------------------------------------------------------------------------------
---NULL Marks
+-- NULL Marks
 ---------------------------------------------------------------------------------
+SELECT custid, country, region, city FROM Sales.Customers WHERE region = N'WA';
+
+SELECT custid, country, region, city FROM Sales.Customers WHERE region <> N'WA';
+
+SELECT custid, country, region, city FROM Sales.Customers WHERE region = NULL;
+
+SELECT custid, country, region, city FROM Sales.Customers WHERE region IS NULL;
+
+SELECT custid, country, region, city FROM Sales.Customers WHERE region <> N'WA' OR region IS NULL;
+
+---------------------------------------------------------------------------------------------
+-- Working with Character Data
+---------------------------------------------------------------------------------------------
+--case insensitive
+SELECT empid, firstname, lastname FROM HR.Employees WHERE lastname = N'davis';
+--case sensitive
+SELECT empid, firstname, lastname FROM HR.Employees WHERE lastname COLLATE Latin1_General_CS_AS = N'davis';
+
+---------------------------------------------------------------------------------------------
+-- Operators and Functions
+---------------------------------------------------------------------------------------------
+
+SELECT empid, firstname + N' ' + lastname AS fullname FROM HR.Employees;
+-- ‘a’, +  NULL, + ‘b’  returns the string ‘NULL’.
+SELECT custid, country, region, city, country + N',' + region + N',' + city AS location FROM Sales.Customers;
+--COALESCE(‘a’, NULL, ‘b’) returns the string ‘ab’.
+SELECT custid, country, region, city, country + COALESCE( N',' + region, N'') + N',' + city AS location FROM Sales.Customers;
+--CONCAT(‘a’, NULL, ‘b’) returns the string ‘ab’.
+SELECT custid, country, region, city, CONCAT(country, N',' + region, N',' + city) AS location FROM Sales.Customers;
+--The SUBSTRING Function
+SELECT SUBSTRING('abcde', 1, 3);
+--The LEFT and RIGHT Functions
+SELECT LEFT('abcde', 3);
+SELECT RIGHT('abcde', 3);
+
+--The LEN and DATALENGTH Functions
+SELECT LEN(N'abcde'); --5
+--Each character requires two bytes of storage (in most cases, at least)
+SELECT DATALENGTH(N'abcde'); --10
+
+--CHARINDEX(substring, string[, start_pos])
+SELECT CHARINDEX(' ','Itzik Ben-Gan');
+--PATINDEX(pattern, string)
+SELECT PATINDEX('%[0-9]%', 'abcd123efgh');
+--REPLACE(string, substring1, substring2)
+SELECT REPLACE('1-a 2-b', '-', ':');
+
+SELECT empid, lastname, LEN(lastname) - LEN(REPLACE(lastname, 'e', '')) AS numoccur FROM HR.Employees;
+--REPLICATE(string, n)
+SELECT REPLICATE('abc', 3); --abcabcabc
+--CAST:The value to convert to another datatype.
+SELECT supplierid, RIGHT(REPLICATE('0', 9) + CAST(supplierid AS VARCHAR(10)), 10) AS strsupplierid FROM Production.Suppliers;
+--STUFF(string, pos, delete_length, insertstring)
+SELECT STUFF('xyz', 2, 1, 'abc'); --xabcz
+
+SELECT UPPER('Itzik Ben-Gan');
+SELECT LOWER('Itzik Ben-Gan');
+
+SELECT RTRIM(LTRIM(' abc '));
+-- FORMAT(input , format_string, culture)
+SELECT FORMAT(20150506, '0000-00-00');
+
+--The LIKE Predicate
+SELECT empid, lastname FROM HR.Employees WHERE lastname LIKE N'D%';
