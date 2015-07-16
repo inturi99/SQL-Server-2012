@@ -254,3 +254,114 @@ SELECT FORMAT(20150506, '0000-00-00');
 
 --The LIKE Predicate
 SELECT empid, lastname FROM HR.Employees WHERE lastname LIKE N'D%';
+
+SELECT empid, lastname FROM HR.Employees WHERE lastname LIKE N'_e%';
+--first character in the last name is A, B, or C.
+SELECT empid, lastname FROM HR.Employees WHERE lastname LIKE N'[ABC]%';
+
+SELECT empid, lastname FROM HR.Employees WHERE lastname LIKE N'[A-E]%';
+
+SELECT empid, lastname FROM HR.Employees WHERE lastname LIKE N'[^A-E]%';
+
+-----------------------------------------------------------------------------
+-- Working with Date and Time Data
+-----------------------------------------------------------------------------
+
+SELECT orderid, custid, empid, orderdate FROM Sales.Orders WHERE orderdate = '20070212';
+
+sp_help 'Sales.Orders';
+
+SELECT orderid, custid, empid, orderdate FROM Sales.Orders WHERE orderdate =CAST('20070212' AS datetime);
+
+SELECT CONVERT(DATETIME, '07/15/2015', 101);
+
+SELECT CONVERT(DATETIME, '15/07/2015', 103);
+
+SELECT PARSE('07/15/2015' AS DateTime using 'en-US');
+
+SELECT PARSE('15/07/2015' AS DateTime using 'en-GB');
+
+--Working with Date and Time Separately
+
+SELECT orderid,custid,empid,orderdate from Sales.Orders where orderdate='20070212';
+
+
+SELECT orderid,custid,empid,orderdate from Sales.Orders where orderdate >='20070212' AND orderdate < '20070928';
+
+SELECT CAST('12:30:15.123' AS DATETIME); -- 1900-01-01 12:30:15.123
+
+--Filtering Date Ranges
+
+SELECT orderid,custid,empid,orderdate from Sales.Orders where YEAR(orderdate) =2007
+
+SELECT orderid,custid,empid,orderdate from Sales.Orders where orderdate >='20070212' AND orderdate < '20080101';
+
+
+SELECT orderid,custid,empid,orderdate from Sales.Orders where YEAR(orderdate) =2007 AND MONTH(orderdate) =02;
+
+-- Date and Time Functions
+
+SELECT GETDATE() AS [GETDATE],
+       CURRENT_TIMESTAMP AS [CURRENT_TIMESTAMP],
+	   GETUTCDATE() AS [GETUTCDATE],
+	   SYSDATETIME() AS [SYSDATETIME],
+	   SYSUTCDATETIME() AS [SYSUTCDATE],
+	   SYSDATETIMEOFFSET() AS [SYSDATETIMEOFFSET];
+
+SELECT CAST(SYSDATETIME() AS date) AS [Current_Date],
+       CAST(SYSDATETIME() AS time) AS [Current_time]
+
+SELECT CAST('20090212' AS DATE); -- 2009-02-12
+
+SELECT CAST(SYSDATETIME() AS DATE);
+
+SELECT CAST(SYSDATETIME() AS TIME);
+
+--CHAR(8) by using style 112 (‘YYYYMMDD’)
+SELECT CONVERT(CHAR(8),CURRENT_TIMESTAMP,112) --20150716	 
+
+SELECT CAST(CONVERT(CHAR(8),CURRENT_TIMESTAMP,112) AS DATETIME); -- 2015-07-16 00:00:00.000
+
+SELECT CONVERT(CHAR(12),CURRENT_TIMESTAMP,114)  --11:36:51:423
+
+SELECT CAST(CONVERT(CHAR(12),CURRENT_TIMESTAMP,114) AS DATETIME) -- 1900-01-01 11:53:10.540
+
+SELECT SWITCHOFFSET(SYSDATETIMEOFFSET(),'-05:00')     -- 2015-07-16 01:27:05.5959159 -05:00
+
+SELECT SWITCHOFFSET(SYSDATETIMEOFFSET(), '+00:00');   --2015-07-16 06:30:16.7462545 +00:00
+
+SELECT DATEADD(year,1,'20090212')
+
+SELECT DATEDIFF(day, '20080212', '20090212');
+
+SELECT DATEADD( day, DATEDIFF(day, '20010101', CURRENT_TIMESTAMP), '20010101');
+--First Day of  a Month
+SELECT DATEADD( month, DATEDIFF(month, '20010101', CURRENT_TIMESTAMP), '20010101');
+-- Last Day of a Month
+SELECT DATEADD( month, DATEDIFF(month, '19991231', CURRENT_TIMESTAMP), '19991231');
+
+SELECT DATEPART(month,'20090812')
+
+SELECT DAY('20090822') AS theday,
+       MONTH('20090822') As themonth,
+	   YEAR('20090822') AS theyear
+
+SELECT DATENAME(month,'20090822')
+
+SELECT DATENAME(year,'20090822')
+
+SELECT ISDATE('20090822') --  return 1
+
+SELECT ISDATE('20090231') --  return 0
+
+SELECT
+DATEFROMPARTS(2012, 02, 12),--2012-02-12
+DATETIME2FROMPARTS(2012, 02, 12, 13, 30, 5, 1, 7), --2012-02-12 13:30:05.0000001
+DATETIMEFROMPARTS(2012, 02, 12, 13, 30, 5, 997), --2012-02-12 13:30:05.997
+DATETIMEOFFSETFROMPARTS(2012, 02, 12, 13, 30, 5, 1, -8, 0, 7),--2012-02-12 13:30:05.0000001 -08:00
+SMALLDATETIMEFROMPARTS(2012, 02, 12, 13, 30),--2012-02-12 13:30:00
+TIMEFROMPARTS(13, 30, 5, 1, 7); --13:30:05.0000001
+-- end-of-month date
+SELECT EOMONTH(SYSDATETIME()); --2015-07-31
+
+SELECT orderid, orderdate, custid, empid FROM Sales.Orders WHERE orderdate = EOMONTH(orderdate);
