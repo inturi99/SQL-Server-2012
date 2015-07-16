@@ -393,3 +393,58 @@ EXEC sys.sp_helpconstraint @objname = N'Sales.Orders';
 SELECT
 SERVERPROPERTY('ProductLevel'); --RTM
 
+SELECT
+DATABASEPROPERTYEX(N'TSQL2012', 'Collation');
+
+-------------------------------------------------------------------------------------------
+--Exercises
+-------------------------------------------------------------------------------------------
+
+--1
+SELECT orderid, orderdate, custid, empid FROM Sales.Orders WHERE YEAR(orderdate) = 2007 AND MONTH(orderdate) = 6;
+--OR
+SELECT orderid, orderdate, custid, empid FROM Sales.Orders WHERE orderdate >= '20070601' AND orderdate < '20070701';
+--2
+SELECT orderid, orderdate, custid, empid FROM Sales.Orders WHERE orderdate = EOMONTH(orderdate);
+
+SELECT orderid, orderdate, custid, empid FROM Sales.Orders WHERE orderdate = DATEADD(month, DATEDIFF(month, '19991231', orderdate), '19991231');
+
+--3
+SELECT empid, firstname, lastname FROM HR.Employees WHERE lastname LIKE '%a%a%';
+
+--4
+SELECT orderid, SUM(qty*unitprice) AS totalvalue FROM Sales.OrderDetails GROUP BY orderid HAVING SUM(qty*unitprice) > 10000
+ORDER BY totalvalue DESC;
+
+--5
+SELECT TOP (3) shipcountry, AVG(freight) AS avgfreight FROM Sales.Orders WHERE orderdate >= '20070101' AND orderdate < '20080101'
+GROUP BY shipcountry ORDER BY avgfreight DESC;
+--OR
+SELECT shipcountry, AVG(freight) AS avgfreight FROM Sales.Orders WHERE orderdate >= '20070101' AND orderdate < '20080101'
+GROUP BY shipcountry ORDER BY avgfreight DESC OFFSET 0 ROWS FETCH FIRST 3 ROWS ONLY;
+
+--6
+SELECT custid, orderdate, orderid, ROW_NUMBER() OVER(PARTITION BY custid ORDER BY orderdate, orderid) AS rownum
+FROM Sales.Orders ORDER BY custid, rownum;
+
+--7
+SELECT empid, firstname, lastname, titleofcourtesy,
+CASE titleofcourtesy
+WHEN 'Ms.' THEN 'Female'
+WHEN 'Mrs.' THEN 'Female'
+WHEN 'Mr.' THEN 'Male'
+ELSE 'Unknown'
+END AS gender
+FROM HR.Employees;
+
+SELECT empid, firstname, lastname, titleofcourtesy,
+CASE
+WHEN titleofcourtesy IN('Ms.', 'Mrs.') THEN 'Female'
+WHEN titleofcourtesy = 'Mr.' THEN 'Male'
+ELSE 'Unknown'
+END AS gender
+FROM HR.Employees;
+
+--8
+SELECT custid, region FROM Sales.Customers
+ORDER BY CASE WHEN region IS NULL THEN 1 ELSE 0 END, region;
