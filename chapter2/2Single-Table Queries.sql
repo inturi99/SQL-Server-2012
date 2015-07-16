@@ -365,3 +365,31 @@ TIMEFROMPARTS(13, 30, 5, 1, 7); --13:30:05.0000001
 SELECT EOMONTH(SYSDATETIME()); --2015-07-31
 
 SELECT orderid, orderdate, custid, empid FROM Sales.Orders WHERE orderdate = EOMONTH(orderdate);
+
+-------------------------------------------------------------------------------------
+-- Querying Metadata
+-------------------------------------------------------------------------------------
+
+SELECT SCHEMA_NAME(schema_id) AS table_schema_name,name AS table_name from sys.tables
+
+SELECT name AS column_name, TYPE_NAME(system_type_id) AS column_type, max_length, collation_name, is_nullable
+FROM sys.columns WHERE object_id = OBJECT_ID(N'Sales.Orders');
+
+SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = N'BASE TABLE';
+
+--System Stored Procedures and Functions
+
+EXEC sys.sp_tables;
+
+EXEC sys.sp_help @objname = N'Sales.Orders';
+
+EXEC sys.sp_columns
+@table_name = N'Orders',
+@table_owner = N'Sales';
+
+EXEC sys.sp_helpconstraint @objname = N'Sales.Orders';
+
+
+SELECT
+SERVERPROPERTY('ProductLevel'); --RTM
+
