@@ -27,3 +27,23 @@ SELECT custid,orderid,orderdate,empid from Sales.Orders where custid IN (SELECT 
 
 SELECT custid,companyname from Sales.Customers where custid  NOT IN (SELECT O.custid from Sales.Orders AS O);
 
+
+SELECT n from dbo.Nums WHERE n BETWEEN (SELECT MIN(O.orderid) from dbo.Orders AS O) AND (SELECT  MAX(O.Orderid) from dbo.Orders AS O)
+AND n NOT IN (SELECT O.orderid from dbo.Orders AS O)
+-------------------------------------------------------------
+-- Correlated Subqueries
+-------------------------------------------------------------
+SELECT custid, orderid, orderdate, empid FROM Sales.Orders AS O1
+WHERE orderid = (SELECT MAX(O2.orderid) FROM Sales.Orders AS O2 WHERE O2.custid = O1.custid) order by O1.custid ;
+
+SELECT orderid, custid, val, CAST(100. * val / (SELECT SUM(O2.val) FROM Sales.OrderValues AS O2 WHERE O2.custid = O1.custid) AS NUMERIC(5,2)) AS pct
+FROM Sales.OrderValues AS O1 ORDER BY custid, orderid;
+
+--The EXISTS Predicate
+
+SELECT C.custid,C.companyname,C.country from Sales.Customers AS C WHERE C.country=N'Spain'
+AND EXISTS (SELECT * from Sales.Orders AS O WHERE O.custid=C.custid)  
+
+SELECT C.custid,C.companyname,C.country from Sales.Customers AS C WHERE C.country=N'Spain'
+AND NOT EXISTS (SELECT * from Sales.Orders AS O WHERE O.custid=C.custid)
+
